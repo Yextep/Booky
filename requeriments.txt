@@ -1,0 +1,4 @@
+googlesearch-python
+requests
+beautifulsoup4
+
