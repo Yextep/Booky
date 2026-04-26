@@ -1,4 +1,2 @@
-googlesearch-python
-requests
-beautifulsoup4
-
+requests>=2.31,<3
+rich>=13,<15
