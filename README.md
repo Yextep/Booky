@@ -1,31 +1,49 @@
 # Descarga Libros Gratis En Línea Con Booky
 
-El script permite que el usuario ingrese el título del libro que desea buscar, especifica cuántos resultados desea obtener y puede seleccionar uno o varios libros para descargar. La entrada del usuario se valida y se procesa en un bucle while. El usuario tiene varias opciones, como ingresar "salir" para salir del programa, "buscar" para realizar una nueva búsqueda, "descargar" para descargar todos los libros o ingresar números separados por comas para descargar libros específicos. Cuando se realiza una búsqueda, el script utiliza la biblioteca googlesearch para buscar libros relacionados con la consulta y obtener los resultados en formato PDF. Los resultados de la búsqueda se muestran al usuario, y se le permite elegir qué libros desea descargar o si desea buscar más libros.
-
 <img align="center" height="480" width="1000" alt="GIF" src="https://github.com/Yextep/Booky/assets/114537444/6cfae5c9-5392-49b7-ae0b-4ba61f1d4029"/>
 
-# Características principales
-- 📗 **Búsqueda personalizada:** Ingresa "libro para aprender yoga" o "libro de programación"  y obtén resultados específicos.
-- ✏️ **Flexibilidad:** Descarga un libro, varios o todos los encontrados.
-- 📲 **Descargas organizadas:** Los libros descargados se almacenan en una carpeta designada.
-- ✏️ **Gestión de errores:** El script maneja entradas incorrectas y permite volver a intentarlo.
-- 📗 **Reconocimiento de tíldes:** Soporta tíldes y caracteres especiales para una búsqueda precisa.
+Buscador/descargador interactivo de documentos abiertos. Esta versión reemplaza el scraping de Google por APIs públicas y añade validación de enlaces para evitar errores como `401 Unauthorized` en archivos que aparecen en metadatos pero no son descargables públicamente.
 
-# Instalación
+## Instalación
 
-Clonamos el repositorio
 ```bash
-git clone https://github.com/Yextep/Booky
-```
-Accedemos a la carpeta
+python -m venv .venv
+source .venv/bin/activate    # Windows: .venv\Scripts\activate
+pip install -r requirements.txt
+python booky_open.py
+```                                                                    
+## Fuentes incluidas                                                   
+- **Project Gutenberg / Gutendex**: libros de dominio público.
+- **arXiv**: papers/preprints de acceso abierto en PDF.
+- **DOAB**: libros académicos open access con bitstreams oficiales.
+- **Europe PMC + PMC OA service**: artículos biomédicos open access con PDF cuando existe.
+- **Internet Archive**: sólo marca como descargables los archivos que pasan validación; los ítems de préstamo, accesibilidad o bloqueados quedan como ficha.
+- **Open Library**: catálogo/metadatos; abre la ficha, no fuerza descargas.
+- **OpenAlex**: opcional. Define `OPENALEX_API_KEY` si quieres usarlo:
+
 ```bash
-cd Booky
+export OPENALEX_API_KEY="tu_api_key"
 ```
-Instalamos requerimientos
-```bash
-pip install -r requeriments.txt
-```
-Ejecutamos el Script
-```bash
-python3 booky.py
-```
+
+## Qué cambió frente a la versión anterior
+
+1. **Validación previa de URLs**: usa `HEAD` y después `GET` con `Range: bytes=0-0` para comprobar si el archivo es realmente accesible sin descargarlo entero.
+2. **Internet Archive más seguro**: si un item está restringido, en préstamo o devuelve 401/403, Booky no lo muestra como descarga directa.
+3. **Estados claros**:
+   - `✅ directo`: descargable validado.
+   - `🔎 ficha`: abre la página pública.
+   - `⛔ restringido`: requiere permisos, login, préstamo o accesibilidad.
+   - `❌ caído`: URL descartada por error o tipo inesperado.
+4. **Nuevas fuentes**: DOAB y Europe PMC/PMC OA.
+5. **Exportación**: JSON y CSV incluyen `access`, `download_url`, `source_url`, licencia y descripción.
+
+## Uso recomendado
+
+- Para literatura clásica: activa `gutenberg` y formatos `epub,txt,html`.
+- Para papers técnicos: activa `arxiv,europepmc,openalex` y formato `pdf`.
+- Para libros académicos abiertos: activa `doab` y `pdf,epub`.
+- Para catálogos y fichas: activa `openlibrary,internet_archive`.
+
+## Nota legal
+
+Booky Open 2 está diseñado para descubrir y descargar documentos abiertos, de dominio público, open access o descargables con autorización. No incluye técnicas para saltarse pagos, préstamos, credenciales, controles de acceso, directorios expuestos accidentalmente ni material pirateado.
